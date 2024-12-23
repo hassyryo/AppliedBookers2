@@ -45,71 +45,86 @@
   <% end %>
 
   </div>
-  <div class="col-md-8 offset-md-1"> 
-  <h1 class="heading">Book detail</h1>
-           <span>
-            <% if @book.user.profile_image.present? %>
-              <%= image_tag @book.user.profile_image, size: "100x100" %>
-            <% else %>
-              <%= image_tag 'no_image.jpg', size: "100x100" %> 
-            <% end %>
-            <span>
-            
+    <div class="col-md-8 offset-md-1">
+    <h1>Book detail</h1>
+      <table class="table table-striped">
+        <tbody>  
+          <tr>
+            <td>
+              <% if @book.user.profile_image.present? %>
+                <%= image_tag @book.user.profile_image, size: "100x100" %><br>
+                <span><%=link_to @book.user.name, "/users/#{@book.user.id}"%><span>
+              <% else %>
+                <%= image_tag 'no_image.jpg', size: "100x100" %><br>
+                <span><%=link_to @book.user.name, "/users/#{@book.user.id}"%><span>
+              <% end %>
+            </td>
+            <td>
               <span><%=link_to @book.title, "/books/#{@book.id}"%><span>
-              
+            </td>
+            <td>
               <span><%= @book.body %></span><br>
-            
-              <span><%=link_to @book.user.name, "/users/#{@book.user.id}"%><span><br>
-              
+            </td>
+            <td>
               <% if @book.user.id == current_user.id %>
-           
-              <span><%= link_to "Editing Book", edit_book_path(@book.id) %></span><br>
-           
-              <span><%= link_to "Destroy", book_path, method: :delete, "data-confirm" => "Are you Sure?" %></span>
-
-              <br>
-              <br>
-
-          
+                <span><%= link_to "Editing Book", edit_book_path(@book.id) %></span><br>
+                <span><%= link_to "Destroy", book_path, method: :delete, "data-confirm" => "Are you Sure?" %></span>
+              <% end %>
+            </td>
+            <td>
               <% if @book.favorited_by?(current_user) %>
-            <p>
-            <%= link_to book_favorite_path(@book), method: :delete do %>
-              <i class="fa-solid fa-heart"></i><%= @book.favorites.count %> 
-            <% end %>
-            </p>
-            <% else %>
-            <p>
-            <%= link_to book_favorite_path(@book), method: :post do %>
-              <i class="fa-regular fa-heart"></i><%= @book.favorites.count %>
-            <% end %>
-            </p>
-            <% end %>
-              <br>
+                <%= link_to book_favorite_path(@book), method: :delete do %>
+                <i class="fa-solid fa-heart"></i><%= @book.favorites.count %> 
+                <% end %>
+              <% else %>
+               <%= link_to book_favorite_path(@book), method: :post do %>
+               <i class="fa-regular fa-heart"></i><%= @book.favorites.count %>
+               <% end %>
+              <% end %>
+            </td>
+            <td>
               <p>コメント件数：<%= @book.book_comments.count %></p>
-              <% @book.book_comments.each do |book_comment| %>
-                <p><%= image_tag @book.user.profile_image, size: "100x100" %></p>
-                <%= book_comment.user.name %>
-                <%= book_comment.created_at.strftime('%Y/%m/%d') %><br>
-                <%= book_comment.comment %><br>
+            </td>
+          </tr>         
+        </tbody>
+      </table>
+      
+      <h5>Comments</h5>
+      
+          <table class="table table-striped">
+          <% @book.book_comments.each do |book_comment| %>
+                  
+            <tbody>
+              <tr>
+                <td>
+                  <% if book_comment.user.profile_image.present? %>
+                    <%= image_tag book_comment.user.profile_image, size: "50x50" %><br>
+                    <span><%=link_to book_comment.user.name, "/users/#{book_comment.user.id}"%><span>
+                  <% else %>
+                    <%= image_tag 'no_image.jpg', size: "50x50" %><br>
+                    <span><%=link_to book_comment.user.name, "/users/#{book_comment.user.id}"%><span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= book_comment.comment %>
+                </td>
+                <td>
                 <% if book_comment.user == current_user %>
-                  <%= link_to "Destroy", book_book_comment_path(book_comment.book, book_comment), method: :delete %><br>
+                  <%= link_to "Destroy", book_book_comment_path(book_comment.book, book_comment), method: :delete, class: 'btn btn-danger nav-link d-inline' , style: 'width:100px; '  %><br>
+                  <% end %>
                 <% end %>
-                
-                <% end %>
+                </td>
+              </tr>
+            </tbody>
+          </table>
               <br>
               <div>
               <%= form_with model: [@book, @book_comment] do |f| %>
-              <%= f.text_area :comment, rows: '5', placeholder: "コメントをここに" %>
+              <%= f.text_area :comment, rows: '5', placeholder: "コメントをここに" , style: 'width: 100%;' %>
               <%= f.submit "送信する" %>
               <% end %>
-              </div>
-           
-            <% end %>
-           
-            
-      
-      </div>  <!-- この行を追加 -->
+            </div>  
       </div>
-      
+      </div>   
 
 
